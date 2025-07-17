@@ -51,7 +51,6 @@ export default function Page({ token }) {
     },
   });
   const onSubmit = async (values) => {
-
     const response = await fetch("http://localhost:3000/api/eventCreation", {
       method: "POST",
       headers: {
@@ -60,10 +59,9 @@ export default function Page({ token }) {
       body: JSON.stringify({ values, token }),
     });
     const results = await response.json();
-    console.log("values:", results.message);
   };
   return (
-    <div  className="justify-center w-full flex text-center pt-10 flex-col items-center">
+    <div className="justify-center w-full flex text-center pt-10 flex-col items-center">
       <h4>event creation form</h4>
       <Form {...form}>
         <form

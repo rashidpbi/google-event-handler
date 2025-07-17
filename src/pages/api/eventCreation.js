@@ -33,7 +33,7 @@ export default async function handler(req, res) {
           res.status(400).send({error:err})
         }
         console.log("Event created: %s", event.htmlLink);
-        res.status(200).json({ message: "successful " });
+        res.status(200).json({ message: "successful event insertion" });
       }
     );
   } else {
