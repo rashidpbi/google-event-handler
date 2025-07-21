@@ -58,7 +58,15 @@ export default function Page({ token }) {
       },
       body: JSON.stringify({ values, token }),
     });
-    const results = await response.json();
+    if(response.ok){
+      const results = await response.json();
+      let currEvents = JSON.parse(localStorage.getItem("events"))
+      // console.log("currEvents",currEvents)
+      // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
+      currEvents.push(results.newEvent)
+      localStorage.setItem("events",JSON.stringify(currEvents))
+    }
+   
   };
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">

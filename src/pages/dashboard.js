@@ -6,6 +6,8 @@ export default function page() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [events, setEvents] = useState(null);
+  console.log("evnets:", events);
+  console.log("Boolean(events):", Boolean(events));
   const onDelete = async (id) => {
     try {
       const response = await fetch(
@@ -28,6 +30,17 @@ export default function page() {
     }
   };
   useEffect(() => {
+    const localData = JSON.parse(localStorage.getItem("events"));
+
+    if (localData) {
+      console.log("Boolean(localData):",Boolean(localData))
+      console.log("localData:",localData)
+       console.log("Array.isArray(localData):",Array.isArray(localData))
+      setEvents(localData);
+      setIsLoading(false)
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/eventList", {
@@ -45,6 +58,7 @@ export default function page() {
       } catch (error) {
         console.log("error fetching data: ", error);
         setError(true);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -63,8 +77,9 @@ export default function page() {
         <Button>create event</Button>
       </Link>
       <div className="grid gap-2">
-        {Boolean(localStorage.getItem("events")) &&
-          JSON.parse(localStorage.getItem("events")).map((event, i) => {
+        {/* {Number(Array.isArray(events))} */}
+        {events &&
+          events.map((event, i) => {
             return (
               <div key={i}>
                 {event.summary}

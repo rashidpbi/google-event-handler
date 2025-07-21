@@ -32,8 +32,23 @@ export default async function handler(req, res) {
           );
           res.status(400).send({error:err})
         }
+        let data = event.data
+        let newEvent = {
+      summary: data.summary,
+      location: data.location,
+      description: data.description,
+      start: {
+        dateTime: data.start,
+        timeZone: "UTC",
+      },
+      end: {
+        dateTime: data.end,
+        timeZone: "UTC",
+      },
+    };
+        console.log("event:",event)
         // console.log("Event created: %s", event.htmlLink);
-        res.status(200).json({ message: "successful event insertion" });
+        res.status(200).json({ message: "successful event insertion",newEvent: newEvent});
       }
     );
   } else {
