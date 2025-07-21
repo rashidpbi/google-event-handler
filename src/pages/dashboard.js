@@ -20,6 +20,7 @@ export default function page() {
       );
       if (response.ok) {
         const updatedEvents = events.filter((event) => event.id != id);
+        localStorage.setItem("events", JSON.stringify(updatedEvents));
         setEvents(updatedEvents);
       }
     } catch (error) {
@@ -35,10 +36,12 @@ export default function page() {
             "Content-Type": "application/json",
           },
         });
-        const data = await response.json();
-        console.log("events: ", data.events);
-        setEvents(data.events);
-        setIsLoading(false);
+        if (response.ok) {
+          const data = await response.json();
+          setEvents(data.events);
+          localStorage.setItem("events", JSON.stringify(data.events));
+          setIsLoading(false);
+        }
       } catch (error) {
         console.log("error fetching data: ", error);
         setError(true);
@@ -60,8 +63,8 @@ export default function page() {
         <Button>create event</Button>
       </Link>
       <div className="grid gap-2">
-        {events &&
-          events.map((event, i) => {
+        {Boolean(localStorage.getItem("events")) &&
+          JSON.parse(localStorage.getItem("events")).map((event, i) => {
             return (
               <div key={i}>
                 {event.summary}
