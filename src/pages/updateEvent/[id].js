@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,24 +22,10 @@ const formSchema = z.object({
   start: z.coerce.date(),
   end: z.coerce.date(),
 });
-export async function getServerSideProps({ req }) {
-  const accessToken = req.cookies.google_access_token;
+import { useRouter } from "next/router";
 
-  if (!accessToken) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {
-      token: accessToken,
-    },
-  };
-}
-export default function Page({ token }) {
+export default function Page() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,26 +37,43 @@ export default function Page({ token }) {
     },
   });
   const onSubmit = async (values) => {
-    const response = await fetch("http://localhost:3000/api/eventCreation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ values, token }),
-    });
-    if(response.ok){
+    console.log("values: ", values);
+    const response = await fetch(
+      `http://localhost:3000/api/eventUpdation/${router.query.id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ values }),
+      }
+    );
+    if (response.ok) {
       const results = await response.json();
-      let currEvents = JSON.parse(localStorage.getItem("events"))
-      // console.log("currEvents",currEvents)
-      // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
-      currEvents.push(results.data)
-      localStorage.setItem("events",JSON.stringify(currEvents))
+      let currEvents = JSON.parse(localStorage.getItem("events"));
+      console.log("/currEvents:",currEvents)
+      let filteredCurrEvents = currEvents.filter((event)=>{
+        console.log("/ event.id:  ",event.id," & ","router.query.id: ",router.query.id)
+     return  event.id !== router.query.id
+    }) //to delete older event from list 
+      console.log("/filteredCurrEvents: ",filteredCurrEvents)
+       console.log("/filteredCurrEvents.length: ",filteredCurrEvents.length)
+      filteredCurrEvents.push(results.updatedEventData); //to add updated event to list
+      console.log("/filteredCurrEvents after push: ",filteredCurrEvents)
+      console.log("/length of filteredCurrEvents after push: ",filteredCurrEvents.length)
+      localStorage.setItem("events", JSON.stringify(filteredCurrEvents));
+      console.log("/events in local storage: ",localStorage.getItem("events"))
     }
-   
   };
+
+  try {
+  } catch (error) {
+    console.log("error:", error);
+  }
+
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">
-      <h4>event creation form</h4>
+      <h4>event updation form</h4>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

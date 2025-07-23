@@ -29,16 +29,19 @@ export default function page() {
       console.log("error in deleting event", error);
     }
   };
-  useEffect(() => {
-    const localData = JSON.parse(localStorage.getItem("events"));
 
-    if (localData) {
-      console.log("Boolean(localData):",Boolean(localData))
-      console.log("localData:",localData)
-       console.log("Array.isArray(localData):",Array.isArray(localData))
-      setEvents(localData);
-      setIsLoading(false)
-      return;
+  useEffect(() => {
+    if (localStorage.getItem("events")) {
+      const localData = JSON.parse(localStorage.getItem("events"));
+
+      if (localData.length > 0) {
+        console.log("Boolean(localData):", Boolean(localData));
+        console.log("localData:", localData);
+        console.log("Array.isArray(localData):", Array.isArray(localData));
+        setEvents(localData);
+        setIsLoading(false);
+        return;
+      }
     }
 
     const fetchData = async () => {
@@ -83,6 +86,9 @@ export default function page() {
             return (
               <div key={i}>
                 {event.summary}
+                <Link href={`/updateEvent/${event.id}`}>
+                  <Button>update event</Button>
+                </Link>
                 <Button onClick={() => onDelete(event.id)}>delete event</Button>
               </div>
             );
