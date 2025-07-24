@@ -16,11 +16,21 @@ export default async function GET(req, res) {
 
   try {
     const { tokens } = await oauth2Client.getToken(code);
+
     res.setHeader(
       "Set-Cookie",
-      `google_access_token=${tokens.access_token}; HttpOnly; Path=/; Max-Age=${
+      [`google_access_token=${tokens.access_token}; HttpOnly; Path=/; Max-Age=${
         60 * 60 * 24 * 7
-      }; SameSite=Lax`
+      }; SameSite=Lax`,
+      `expiry_date=${tokens.expiry_date}; HttpOnly; Path=/; Max-Age=${
+        60 * 60 * 24 * 7
+      }; SameSite=Lax`,
+      `refresh_token=${tokens.refresh_token}; HttpOnly; Path=/; Max-Age=${
+       60 * 60 * 24 * 7
+     }; SameSite=Lax`,
+      `refresh_token_expires_in=${tokens.refresh_token_expires_in}; HttpOnly; Path=/; Max-Age=${
+        60 * 60 * 24 * 7
+      }; SameSite=Lax`,]
     );
 
     res.writeHead(302, { Location: "/dashboard" });

@@ -39,7 +39,7 @@ export async function getServerSideProps({ req }) {
     },
   };
 }
-export default function Page({ token }) {
+export default function Page() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,7 +56,7 @@ export default function Page({ token }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ values, token }),
+      body: JSON.stringify({ values}),
     });
     if(response.ok){
       const results = await response.json();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -6,8 +6,9 @@ export default function page() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [events, setEvents] = useState(null);
-  console.log("evnets:", events);
+  console.log("eventts:", events);
   console.log("Boolean(events):", Boolean(events));
+
   const onDelete = async (id) => {
     try {
       const response = await fetch(
@@ -29,7 +30,26 @@ export default function page() {
       console.log("error in deleting event", error);
     }
   };
-
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/eventList", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data.events);
+        localStorage.setItem("events", JSON.stringify(data.events));
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("error fetching data: ", error);
+      setError(true);
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     if (localStorage.getItem("events")) {
       const localData = JSON.parse(localStorage.getItem("events"));
@@ -44,26 +64,6 @@ export default function page() {
       }
     }
 
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/eventList", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data.events);
-          localStorage.setItem("events", JSON.stringify(data.events));
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.log("error fetching data: ", error);
-        setError(true);
-        setIsLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -94,6 +94,7 @@ export default function page() {
             );
           })}
       </div>
+      <button onClick={() => fetchData()}>sync</button>
     </div>
   );
 }
