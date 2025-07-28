@@ -22,7 +22,7 @@ export default function handler(req, res) {
     state: state,
   });
 
-  // You might want to store the state in session or database for verification
+  //might want to store the state in session or database for verification in future
   // req.session.oauthState = state;
 
   res.json({ authUrl: authorizationUrl });
