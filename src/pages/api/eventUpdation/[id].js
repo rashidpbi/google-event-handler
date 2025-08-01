@@ -25,7 +25,6 @@ export default async function handler(req, res) {
         refresh_token_expires_in,
         refresh_token,
       });
-      // oauth2Client.setCredentials({ access_token: google_access_token});
       oauth2Client.on("tokens", (newTokens) => {
         console.log("🔄 Refreshed tokens:", newTokens);
       });

@@ -1,4 +1,3 @@
-// pages/api/auth/google.js
 import { google } from "googleapis";
 import crypto from "crypto";
 
@@ -9,8 +8,8 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 export default function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  if (req.method !== "GET") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
   const scopes = ["https://www.googleapis.com/auth/calendar"];

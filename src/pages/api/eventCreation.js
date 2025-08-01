@@ -10,16 +10,12 @@ export default async function handler(req, res) {
   const { values } = req.body;
   if (req.method === "POST") {
     try {
-      if (!google_access_token) {
-        res.status(401).json({ error: "Unauthorised - Missing token" });
-      }
       oauth2Client.setCredentials({
         access_token: google_access_token,
         expiry_date,
         refresh_token_expires_in,
         refresh_token,
       });
-      // oauth2Client.setCredentials({ access_token: google_access_token});
       oauth2Client.on("tokens", (newTokens) => {
         console.log("🔄 Refreshed tokens:", newTokens);
       });

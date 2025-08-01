@@ -56,17 +56,29 @@ export default function Page() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ values}),
+      body: JSON.stringify({ values }),
     });
-    if(response.ok){
+    if (!response.ok) {
+      // console.log("respnse not ok")
+      // console.log("data.error: ",data.error)
+      if (
+        data.error == "invalid_grant" ||
+        data?.error?.status === "UNAUTHENTICATED"
+      ) {
+        // console.log("invalid ")
+        localStorage.setItem("loggedOutDueToTokenIssue", "true");
+        window.location.href = "http://localhost:3000/login";
+      }
+    }
+    if (response.ok) {
       const results = await response.json();
-      let currEvents = JSON.parse(localStorage.getItem("events"))
+      let currEvents = JSON.parse(localStorage.getItem("events"));
       // console.log("currEvents",currEvents)
       // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
-      currEvents.push(results.data)
-      localStorage.setItem("events",JSON.stringify(currEvents))
+      currEvents.push(results.data);
+      localStorage.setItem("events", JSON.stringify(currEvents));
+      window.location.href = "http://localhost:3000";
     }
-   
   };
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">

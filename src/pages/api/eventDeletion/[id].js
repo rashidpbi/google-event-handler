@@ -7,7 +7,6 @@ export default async function handler(req, res) {
     refresh_token_expires_in,
     refresh_token,
   } = req.cookies;
-  // const expiry_date = Date.now() - 1000;
   const { id } = req.query;
   if (req.method === "POST") {
     if (!google_access_token) {
@@ -20,19 +19,19 @@ export default async function handler(req, res) {
         refresh_token_expires_in,
         refresh_token,
       });
-      // oauth2Client.setCredentials({ access_token: google_access_token});
       oauth2Client.on("tokens", (newTokens) => {
         console.log("🔄 Refreshed tokens:", newTokens);
       });
+
       const calendar = google.calendar({ version: "v3", auth: oauth2Client });
       await calendar.events.delete({
         calendarId: "primary",
         eventId: id,
       });
-      console.log("event deleted");
+      // console.log("event deleted");
       res.status(200).json({ message: `event with id:${id} deleted` });
     } catch (error) {
-      console.log("error: ", error.message);
+      // console.log("error: ", error.message);
       res.status(400).send({ error: error.message });
     }
   } else {

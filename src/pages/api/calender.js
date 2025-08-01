@@ -11,10 +11,10 @@ export default async function handler(req, res) {
       });
       res.status(200).json(calendars);
     } catch (error) {
-      console.log(error)
-      res.status(500).send({error:error})
+      console.log(error);
+      res.status(500).send({ error: error });
     }
-  } else {  
+  } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }

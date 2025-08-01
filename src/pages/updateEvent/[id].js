@@ -37,7 +37,7 @@ export default function Page() {
     },
   });
   const onSubmit = async (values) => {
-    console.log("values: ", values);
+    // console.log("values: ", values);
     const response = await fetch(
       `http://localhost:3000/api/eventUpdation/${router.query.id}`,
       {
@@ -48,21 +48,43 @@ export default function Page() {
         body: JSON.stringify({ values }),
       }
     );
+    if (!response.ok) {
+      // console.log("respnse not ok");
+      // console.log("data.error: ", data.error);
+      if (
+        data.error == "invalid_grant" ||
+        data?.error?.status === "UNAUTHENTICATED"
+      ) {
+        console.log("invalid ");
+        localStorage.setItem("loggedOutDueToTokenIssue", "true");
+        window.location.href = "http://localhost:3000/login";
+      }
+    }
     if (response.ok) {
       const results = await response.json();
       let currEvents = JSON.parse(localStorage.getItem("events"));
-      console.log("/currEvents:",currEvents)
-      let filteredCurrEvents = currEvents.filter((event)=>{
-        console.log("/ event.id:  ",event.id," & ","router.query.id: ",router.query.id)
-     return  event.id !== router.query.id
-    }) //to delete older event from list 
-      console.log("/filteredCurrEvents: ",filteredCurrEvents)
-       console.log("/filteredCurrEvents.length: ",filteredCurrEvents.length)
+      // console.log("/currEvents:", currEvents);
+      let filteredCurrEvents = currEvents.filter((event) => {
+        // console.log(
+        //   "/ event.id:  ",
+        //   event.id,
+        //   " & ",
+        //   "router.query.id: ",
+        //   router.query.id
+        // );
+        return event.id !== router.query.id;
+      }); //to delete older event from list
+      // console.log("/filteredCurrEvents: ", filteredCurrEvents);
+      // console.log("/filteredCurrEvents.length: ", filteredCurrEvents.length);
       filteredCurrEvents.push(results.updatedEventData); //to add updated event to list
-      console.log("/filteredCurrEvents after push: ",filteredCurrEvents)
-      console.log("/length of filteredCurrEvents after push: ",filteredCurrEvents.length)
+      // console.log("/filteredCurrEvents after push: ", filteredCurrEvents);
+      // console.log(
+      //   "/length of filteredCurrEvents after push: ",
+      //   filteredCurrEvents.length
+      // );
       localStorage.setItem("events", JSON.stringify(filteredCurrEvents));
-      console.log("/events in local storage: ",localStorage.getItem("events"))
+      // console.log("/events in local storage: ", localStorage.getItem("events"));
+      window.location.href = "http://localhost:3000";
     }
   };
 
