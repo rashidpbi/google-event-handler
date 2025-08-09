@@ -50,7 +50,20 @@ export default async function handler(req, res) {
       console.log("result.data:", result.data);
       res.status(200).json({ updatedEventData: result.data });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error("Google API error:", error);
+
+  // Normalize error
+  let normalizedError = "Unknown error";
+
+  if (error?.response?.data?.error) {
+    normalizedError = error.response.data.error;
+  } else if (error?.errors?.length) {
+    normalizedError = error.errors[0].message;
+  } else if (error?.message) {
+    normalizedError = error.message;
+  }
+
+  res.status(400).json({ error: normalizedError,  code: error?.code || null });
     }
   } else {
     res.setHeader("Allow", ["POST"]);
