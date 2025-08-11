@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         eventId: id,
         requestBody: {
           summary: values.summary,
-          lcoation: values.lcoation,
+          location: values.location,
           description: values.description,
           end: {
             dateTime: values.end,

@@ -1,6 +1,4 @@
-import Cookies from "js-cookie";
 import React, { useContext, useEffect, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/authContext";
 
@@ -16,22 +14,16 @@ import {
   Clock4,
   CircleCheckBig,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import CreateModal from "@/components/custom/CreateModal";
 import EditModal from "@/components/custom/EditModal";
+import DeleteModal from "@/components/custom/DeleteModal";
 
 export default function page() {
   const [isLoading, setIsLoading] = useState(true);
@@ -60,41 +52,7 @@ export default function page() {
 
     return { pending, completed, total: events.length };
   };
-  const onDelete = async (id) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/eventDeletion/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(id),
-        }
-      );
-       const responseData = await response.json();
-      if (!response.ok) {
-        console.log("respons: ", responseData);
-        console.log("respnse not ok");
-        console.log("responseData.error: ", responseData.error);
-       if (responseData.code === 401 ||
-          responseData.error == "invalid_grant" ||
-          responseData?.error?.status === "UNAUTHENTICATED" || responseData.error == "No refresh token is set." || responseData.error == "missing access token"
-      ) {
-          // console.log("invalid ");
-          localStorage.setItem("loggedOutDueToTokenIssue", "true");
-          window.location.href = "http://localhost:3000/login";
-        }
-      }
-      if (response.ok) {
-        const updatedEvents = events.filter((event) => event.id != id);
-        localStorage.setItem("events", JSON.stringify(updatedEvents));
-        setEvents(updatedEvents);
-      }
-    } catch (error) {
-      console.log("error in deleting event", error);
-    }
-  };
+
   const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/eventList", {
@@ -109,10 +67,13 @@ export default function page() {
         console.log("respons: ", responseData);
         console.log("respnse not ok");
         console.log("responseData.error: ", responseData.error);
-       if (responseData.code === 401 ||
+        if (
+          responseData.code === 401 ||
           responseData.error == "invalid_grant" ||
-          responseData?.error?.status === "UNAUTHENTICATED" || responseData.error == "No refresh token is set." || responseData.error == "missing access token"
-      ) {
+          responseData?.error?.status === "UNAUTHENTICATED" ||
+          responseData.error == "No refresh token is set." ||
+          responseData.error == "missing access token"
+        ) {
           // console.log("invalid ");
           localStorage.setItem("loggedOutDueToTokenIssue", "true");
           window.location.href = "http://localhost:3000/login";
@@ -291,18 +252,16 @@ export default function page() {
                   .map((event, i) => {
                     return (
                       <div key={i} className="border p-4  gap-2 ">
-                       
                         <div className="flex  ">
                           <div className="m-1">
                             <Bell />
                           </div>
                           <div className="m-1 font-bold">{event.summary}</div>
-                            
                         </div>
                         <div className="m-1">
                           {event.location || "location"}
                         </div>
-                              
+
                         <div className="flex">
                           <div className="m-1">
                             <Calendar />
@@ -318,37 +277,34 @@ export default function page() {
                                 timeZone: "Asia/Kolkata",
                               }
                             )}
-                       
                           </div>
                         </div>
-                         <Dialog>
-                        <div className="flex  items-center">
-                         
-                          
+                        <Dialog>
+                          <div className="flex  items-center">
                             <DialogTrigger>
-                            <div className="flex border gap-2  p-2 my-2 rounded-md cursor-pointer ">
-                              <div>
-                                <SquarePen />
+                              <div className="flex border gap-2  p-2 my-2 rounded-md cursor-pointer ">
+                                <div>
+                                  <SquarePen />
+                                </div>
+                                <div>Edit</div>
                               </div>
-                              <div>Edit</div>
-                            </div>
-                          </DialogTrigger>
-                         
-                         
-                          <div
-                            className="flex border gap-2  p-2 my-2  ml-2 rounded-md text-red-400 cursor-pointer "
-                            onClick={() => onDelete(event.id)}
-                            >
-                            <div>
-                              <Trash2 />
-                            </div>
-                            <div>Delete</div>
-                          </div>
-                          <div>
-                            <EditModal id={event.id}/>
-                          </div>
-                        </div>
+                            </DialogTrigger>
+
+                            <Dialog>
+                              <DialogTrigger>
+                                <div className="flex border gap-2  p-2 my-2  ml-2 rounded-md text-red-400 cursor-pointer ">
+                                  <div>
+                                    <Trash2 />
+                                  </div>
+                                  <div>Delete</div>
+                                </div>
+                              </DialogTrigger>
+                              <DeleteModal id={event.id} className="hidden" />
                             </Dialog>
+
+                            <EditModal id={event.id} className="hidden" />
+                          </div>
+                        </Dialog>
                       </div>
                     );
                   })
