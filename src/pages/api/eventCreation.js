@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import oauth2Client from "@/utils/google-auth";
+import getBackendErrorResponseObject from "@/utils/getBackendErrorResponseObject";
 export default async function handler(req, res) {
   const {
     google_access_token,
@@ -40,7 +41,9 @@ export default async function handler(req, res) {
       });
       res.status(200).json({ data: response.data });
     } catch (error) {
-      res.status(400).send({ error: error.message });
+      const { responseObject } = getBackendErrorResponseObject(error);
+
+      res.status(400).json(responseObject);
     }
   } else {
     res.setHeader("Allow", ["POST"]);

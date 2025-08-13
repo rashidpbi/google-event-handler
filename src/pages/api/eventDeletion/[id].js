@@ -1,5 +1,6 @@
 import { google } from "googleapis";
 import oauth2Client from "@/utils/google-auth";
+import getBackendErrorResponseObject from "@/utils/getBackendErrorResponseObject";
 export default async function handler(req, res) {
   const {
     google_access_token,
@@ -28,23 +29,11 @@ export default async function handler(req, res) {
         calendarId: "primary",
         eventId: id,
       });
-      // console.log("event deleted");
       res.status(200).json({ message: `event with id:${id} deleted` });
     } catch (error) {
-     console.error("Google API error:", error);
+      const { responseObject } = getBackendErrorResponseObject(error);
 
-  // Normalize error
-  let normalizedError = "Unknown error";
-
-  if (error?.response?.data?.error) {
-    normalizedError = error.response.data.error;
-  } else if (error?.errors?.length) {
-    normalizedError = error.errors[0].message;
-  } else if (error?.message) {
-    normalizedError = error.message;
-  }
-
-  res.status(400).json({ error: normalizedError,  code: error?.code || null });
+      res.status(400).json(responseObject);
     }
   } else {
     res.setHeader("Allow", ["POST"]);

@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 export default function DeleteModal({ id }) {
   const onDelete = async (id) => {
     try {
@@ -21,19 +22,10 @@ export default function DeleteModal({ id }) {
         }
       );
       const responseData = await response.json();
+      console.log("response.ok: ",response.ok)
       if (!response.ok) {
-        console.log("respons: ", responseData);
-        console.log("respnse not ok");
-        console.log("responseData.error: ", responseData.error);
-        if (
-          responseData.code === 401 ||
-          responseData.error == "invalid_grant" ||
-          responseData?.error?.status === "UNAUTHENTICATED" ||
-          responseData.error == "No refresh token is set." ||
-          responseData.error == "missing access token"
-        ) {
-          localStorage.setItem("loggedOutDueToTokenIssue", "true");
-          window.location.href = "http://localhost:3000/login";
+        if (!response.ok) {
+          handleFrontendResponseObject(responseData);
         }
       }
       if (response.ok) {

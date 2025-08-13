@@ -1,11 +1,12 @@
 import { google } from "googleapis";
 import oauth2Client from "@/utils/google-auth";
+import getBackendErrorResponseObject from "@/utils/getBackendErrorResponseObject";
 
 export default async function handler(req, res) {
   function getFirstDayOfLastMonth() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
-}
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+  }
   const {
     google_access_token,
     expiry_date,
@@ -26,26 +27,15 @@ export default async function handler(req, res) {
         auth: oauth2Client,
         calendarId: "primary",
         // maxResults:13,
-         timeMin: getFirstDayOfLastMonth()
+        timeMin: getFirstDayOfLastMonth(),
         // timeMin: "2025-07-01T00:00:00.000Z",
       });
 
       res.status(200).json({ events: data.items });
     } catch (error) {
-       console.error("Google API error:", error);
+      const { responseObject } = getBackendErrorResponseObject(error);
 
-  // Normalize error
-  let normalizedError = "Unknown error";
-
-  if (error?.response?.data?.error) {
-    normalizedError = error.response.data.error;
-  } else if (error?.errors?.length) {
-    normalizedError = error.errors[0].message;
-  } else if (error?.message) {
-    normalizedError = error.message;
-  }
-
-  res.status(400).json({ error: normalizedError,  code: error?.code || null });
+      res.status(400).json(responseObject);
     }
   } else {
     res.setHeader("Allow", ["GET"]);

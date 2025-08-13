@@ -3,9 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { DatetimePicker } from "@/components/ui/datetime-picker";
-import {
-  Calendar,
-} from "lucide-react";
+import { Calendar } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -31,7 +29,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-export default function EditModal({id}) {
+import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
+export default function EditModal({ id }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,18 +53,10 @@ export default function EditModal({id}) {
         body: JSON.stringify({ values }),
       }
     );
-     const responseData = await response.json();
+    const responseData = await response.json();
     if (!response.ok) {
-      console.log("respons: ",responseData)
-        console.log("respnse not ok");
-        console.log("responseData.error: ", responseData.error);
-        if (responseData.code === 401 ||
-          responseData.error == "invalid_grant" ||
-          responseData?.error?.status === "UNAUTHENTICATED" || responseData.error == "No refresh token is set." || responseData.error == "missing access token"
-      ) {
-        console.log("invalid ");
-        localStorage.setItem("loggedOutDueToTokenIssue", "true");
-        window.location.href = "http://localhost:3000/login";
+      if (!response.ok) {
+        handleFrontendResponseObject(responseData);
       }
     }
     if (response.ok) {
@@ -96,136 +87,145 @@ export default function EditModal({id}) {
   };
 
   return (
-     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">
-               <>
-                 {/* <DialogTrigger asChild>
+    <div className="justify-center w-full flex text-center pt-10 flex-col items-center">
+      <>
+        {/* <DialogTrigger asChild>
                    <Button variant="outline">Open Dialog</Button>
                  </DialogTrigger> */}
-                 <DialogContent className="sm:max-w-2xl w-full">
-                   <DialogHeader>
-                     <div className="flex items-center gap-2">
-                       <div>
-                         <Calendar />
-                       </div>
-                       <div>
-                         <DialogTitle className="font-bold">Edit Task</DialogTitle>
-                         <DialogDescription> </DialogDescription>
-                       </div>
-                     </div>
-                    
-                   </DialogHeader>
-                   <Form {...form}>
-                     <form
-                       onSubmit={form.handleSubmit(onSubmit)}
-                       className="space-y-8 max-w-3xl mx-auto py-10"
-                     >
-                   
-                       
-                       <div className="grid grid-cols-12 gap-4">
-                         <div className="col-span-12">
-                           <FormField
-                             control={form.control}
-                             name="summary"
-                             render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel className="font-semibold">Task Title</FormLabel>
-                                 <FormControl>
-                                   <Input placeholder="" type="" {...field} />
-                                 </FormControl>
-         
-                                 <FormMessage />
-                               </FormItem>
-                             )}
-                           />
-                         </div>
-         
-                         <div className="col-span-12">
-                           <FormField
-                             control={form.control}
-                             name="location"
-                             render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel className="font-semibold">Location</FormLabel>
-                                 <FormControl>
-                                   <Input placeholder="" type="" {...field} />
-                                 </FormControl>
-         
-                                 <FormMessage />
-                               </FormItem>
-                             )}
-                           />
-                         </div>
-                       </div>
-         
-                       <FormField
-                         control={form.control}
-                         name="description"
-                         render={({ field }) => (
-                           <FormItem>
-                             <FormLabel className="font-semibold">Description</FormLabel>
-                             <FormControl>
-                               <Input placeholder="" type="" {...field} />
-                             </FormControl>
-         
-                             <FormMessage />
-                           </FormItem>
-                         )}
-                       />
-         
-                       <div className="grid grid-cols-12 gap-8">
-                         <div className="col-span-12 sm:col-span-6">
-                           <FormField
-                             control={form.control}
-                             name="start"
-                             render={({ field }) => (
-                               <FormItem className="flex flex-col">
-                                 <FormLabel className="font-semibold">Start Time</FormLabel>
-                                 <DatetimePicker
-                                   {...field}
-                                   format={[
-                                     ["months", "days", "years"],
-                                     ["hours", "minutes", "am/pm"],
-                                   ]}
-                                 />
-         
-                                 <FormMessage />
-                               </FormItem>
-                             )}
-                           />
-                         </div>
-         
-                         <div className="col-span-12 sm:col-span-6">
-                           <FormField
-                             control={form.control}
-                             name="end"
-                             render={({ field }) => (
-                               <FormItem className="flex flex-col">
-                                 <FormLabel className="font-semibold">End Time</FormLabel>
-                                 <DatetimePicker
-                                   {...field}
-                                   format={[
-                                     ["months", "days", "years"],
-                                     ["hours", "minutes", "am/pm"],
-                                   ]}
-                                 />
-         
-                                 <FormMessage />
-                               </FormItem>
-                             )}
-                           />
-                         </div>
-                       </div>
-                       {/* <Button type="submit">Submit</Button> */}
-                   <DialogFooter>
-                     <Button type="submit" className="cursor-pointer">Update Task</Button>
-                     <DialogClose asChild>
-                       <Button variant="outline" className="cursor-pointer">Cancel</Button>
-                     </DialogClose>
-                   </DialogFooter>
-                     </form>
-                   </Form>
-                 </DialogContent>
-               </>
-        </div>
-  )
+        <DialogContent className="sm:max-w-2xl w-full">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div>
+                <Calendar />
+              </div>
+              <div>
+                <DialogTitle className="font-bold">Edit Task</DialogTitle>
+                <DialogDescription> </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 max-w-3xl mx-auto py-10"
+            >
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12">
+                  <FormField
+                    control={form.control}
+                    name="summary"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold">
+                          Task Title
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="" type="" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-12">
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold">
+                          Location
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="" type="" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="" type="" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-12 gap-8">
+                <div className="col-span-12 sm:col-span-6">
+                  <FormField
+                    control={form.control}
+                    name="start"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="font-semibold">
+                          Start Time
+                        </FormLabel>
+                        <DatetimePicker
+                          {...field}
+                          format={[
+                            ["months", "days", "years"],
+                            ["hours", "minutes", "am/pm"],
+                          ]}
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="col-span-12 sm:col-span-6">
+                  <FormField
+                    control={form.control}
+                    name="end"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="font-semibold">
+                          End Time
+                        </FormLabel>
+                        <DatetimePicker
+                          {...field}
+                          format={[
+                            ["months", "days", "years"],
+                            ["hours", "minutes", "am/pm"],
+                          ]}
+                        />
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              {/* <Button type="submit">Submit</Button> */}
+              <DialogFooter>
+                <Button type="submit" className="cursor-pointer">
+                  Update Task
+                </Button>
+                <DialogClose asChild>
+                  <Button variant="outline" className="cursor-pointer">
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </>
+    </div>
+  );
 }
