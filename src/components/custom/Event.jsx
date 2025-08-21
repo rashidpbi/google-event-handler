@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Calendar, Bell, Trash2, SquarePen } from "lucide-react";
 import EditModal from "@/components/custom/EditModal";
 import DeleteModal from "@/components/custom/DeleteModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
-export default function Event({ event }) {
+export default function Event({ event,fetchData }) {
+  const [openDelete,setOpenDelete]  = useState(false)
+  const [openEdit, setOpenEdit] = useState(false);
+  
   return (
     <div className="border p-4  gap-2 ">
       <div className="flex  ">
@@ -29,7 +32,7 @@ export default function Event({ event }) {
           })}
         </div>
       </div>
-      <Dialog>
+      <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <div className="flex  items-center">
           <DialogTrigger>
             <div className="flex border gap-2  p-2 my-2 rounded-md cursor-pointer ">
@@ -40,7 +43,7 @@ export default function Event({ event }) {
             </div>
           </DialogTrigger>
 
-          <Dialog>
+          <Dialog open={openDelete} onOpenChange={setOpenDelete}>
             <DialogTrigger>
               <div className="flex border gap-2  p-2 my-2  ml-2 rounded-md text-red-400 cursor-pointer ">
                 <div>
@@ -49,10 +52,10 @@ export default function Event({ event }) {
                 <div>Delete</div>
               </div>
             </DialogTrigger>
-            <DeleteModal id={event.id} className="hidden" />
+            <DeleteModal id={event.id} className="hidden"  open={openDelete} onOpenChange={setOpenDelete} fetchData={fetchData}/>
           </Dialog>
 
-          <EditModal id={event.id} className="hidden" />
+          <EditModal id={event.id} className="hidden"  open={openEdit} onOpenChange={setOpenEdit} fetchData={fetchData}/>
         </div>
       </Dialog>
     </div>

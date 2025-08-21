@@ -19,17 +19,18 @@ export default function page() {
   const [events, setEvents] = useState([]);
   const { updateCookies } = useContext(AuthContext);
   // const [page, setPage] = useState(1);
+    const [open, setOpen] = useState(false)
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalEvents: 0,
     pageSize: 2,
   });
-  const [counts,setCounts] = useState({
-    pending:0,
-    completed:0,
-    total:0
-  })
+  const [counts, setCounts] = useState({
+    pending: 0,
+    completed: 0,
+    total: 0,
+  });
   // const getEventCounts = (events = []) => {
   //   const now = new Date();
   //   let pending = 0;
@@ -79,9 +80,13 @@ export default function page() {
         console.log("response data: ", responseData);
         setPagination(responseData.pagination);
         setEvents(responseData.events);
-        setCounts(responseData.counts)
-        localStorage.setItem("events", JSON.stringify(responseData.allEvents));
-        // console.log("esponseData.events:", responseData.events);
+        setCounts(responseData.counts);
+        if (responseData.allEvents) {
+          localStorage.setItem(
+            "events",
+            JSON.stringify(responseData.allEvents)
+          );
+        }
         setIsLoading(false);
       }
     } catch (error) {
@@ -112,8 +117,8 @@ export default function page() {
     },
   ];
   useEffect(() => {
-    const url = new URL(window.location);
-    console.log("page: ", url.searchParams.get("page"));
+    // const url = new URL(window.location);
+    // console.log("page: ", url.searchParams.get("page"));
     const allCookies = document.cookie;
     updateCookies(allCookies);
     const handleLocalStorage = () => {
@@ -122,7 +127,6 @@ export default function page() {
       if (stored && stored !== "undefined" && stored !== "null") {
         try {
           const localData = JSON.parse(localStorage.getItem("events"));
-
           if (localData.length > 0) {
             const now = new Date();
             const pendingEvents = localData.filter((event) => {
@@ -152,19 +156,19 @@ export default function page() {
               pageSize,
             });
 
-             // Calculate counts from all local data
-            const completedEvents = localData.filter(event => {
+            // Calculate counts from all local data
+            const completedEvents = localData.filter((event) => {
               if (!event.start) return false;
               const eventDateStr = event.start.dateTime || event.start.date;
               if (!eventDateStr) return false;
               const eventDate = new Date(eventDateStr);
               return eventDate <= now;
             });
-            
+
             setCounts({
               total: localData.length,
               pending: pendingEvents.length,
-              completed: completedEvents.length
+              completed: completedEvents.length,
             });
 
             setIsLoading(false);
@@ -177,7 +181,7 @@ export default function page() {
       return false;
     };
     if (!handleLocalStorage()) {
-      fetchData();
+      fetchData(currentPage, pageSize);
     }
   }, [currentPage, pageSize]);
 
@@ -189,29 +193,29 @@ export default function page() {
   }
   return (
     <div className="grid text-md mx-8  sm:mx-36  ">
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DashboardHeader fetchData={fetchData} />
         <StatusBar items={statusBarItems} />
         <div className="grid mx-2 mt-2 border rounded-md ">
           <div className="grid ">
             {events &&
-              (counts.pending > 0 ? <ReminderHeader n={events ? counts.pending : 0} /> : "")}
+              (counts.pending > 0 ? (
+                <ReminderHeader n={events ? counts.pending : 0} />
+              ) : (
+                ""
+              ))}
             {events &&
               (counts.pending > 0 ? (
                 events
-                  .filter(
-                    (event) => new Date(event?.start?.dateTime) > new Date()
-                  )
-                  // .slice(start, start + limit)
                   .map((event, i) => {
-                    return <Event event={event} key={i} />;
+                    return <Event event={event} key={i} fetchData={fetchData}/>;
                   })
               ) : (
                 <EmptyEvent />
               ))}
           </div>
         </div>
-        <CreateModal />
+        <CreateModal  open={open} onOpenChange={setOpen} fetchData={fetchData}/>
       </Dialog>
       {pagination.totalPages > 1 && (
         <div className="md:fixed left-48 right-48 bottom-22  mx-auto ">
@@ -220,10 +224,11 @@ export default function page() {
             pageSize={pagination.pageSize}
             totalCount={pagination.totalEvents}
             page={pagination.currentPage}
-            pageSizeSelectOptions={{
-              pageSizeOptions: [2, 5, 10, 20],
-              pageSizeSearchParam: "pageSize",
-            }}
+            //   pageSizeSelectOptions={{
+            //     pageSizeOptions: [2, 5, 10, 20],
+            //     pageSizeSearchParam: "pageSize",
+            //   }
+            // }
           />
         </div>
       )}
