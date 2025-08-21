@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
-export default function DeleteModal({ id ,openDelete,onOpenChange,fetchData}) {
+export default function DeleteModal({ id, onSuccess }) {
   const onDelete = async (id) => {
     try {
       const response = await fetch(
@@ -22,7 +22,7 @@ export default function DeleteModal({ id ,openDelete,onOpenChange,fetchData}) {
         }
       );
       const responseData = await response.json();
-      console.log("response.ok: ",response.ok)
+      console.log("response.ok: ", response.ok);
       if (!response.ok) {
         if (!response.ok) {
           handleFrontendResponseObject(responseData);
@@ -32,8 +32,9 @@ export default function DeleteModal({ id ,openDelete,onOpenChange,fetchData}) {
         let currEvents = JSON.parse(localStorage.getItem("events"));
         const updatedEvents = currEvents.filter((event) => event.id != id);
         localStorage.setItem("events", JSON.stringify(updatedEvents));
-        onOpenChange(false)
-        fetchData()
+        if (onSuccess) {
+          onSuccess();
+        }
         // window.location.href = "http://localhost:3000";
       }
     } catch (error) {

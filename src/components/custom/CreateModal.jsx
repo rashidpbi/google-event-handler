@@ -33,7 +33,7 @@ import {
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 
-export default function CreateModal({ open, onOpenChange,fetchData }) {
+export default function CreateModal({onSuccess}) {
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -65,8 +65,10 @@ export default function CreateModal({ open, onOpenChange,fetchData }) {
       // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
       currEvents.push(responseData.data);
       localStorage.setItem("events", JSON.stringify(currEvents));
-      onOpenChange(false);
-      fetchData()
+     
+      if(onSuccess) {
+        onSuccess();
+      }
     }
   };
   return (

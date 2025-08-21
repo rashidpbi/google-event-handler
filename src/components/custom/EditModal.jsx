@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
-export default function EditModal({ id ,open,onOpenChange,fetchData }) {
+export default function EditModal({ id ,onSuccess }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,8 +83,9 @@ export default function EditModal({ id ,open,onOpenChange,fetchData }) {
       localStorage.setItem("events", JSON.stringify(filteredCurrEvents));
       // console.log("/events in local storage: ", localStorage.getItem("events"));
       // window.location.href = "http://localhost:3000";
-      onOpenChange(false)
-      fetchData()
+      if(onSuccess) {
+        onSuccess();
+      }
     }
   };
 

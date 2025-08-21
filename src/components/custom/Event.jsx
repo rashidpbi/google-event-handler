@@ -4,10 +4,10 @@ import EditModal from "@/components/custom/EditModal";
 import DeleteModal from "@/components/custom/DeleteModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
-export default function Event({ event,fetchData }) {
-  const [openDelete,setOpenDelete]  = useState(false)
-  const [openEdit, setOpenEdit] = useState(false);
-  
+export default function Event({ event, refreshCurrentPage }) {
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+
   return (
     <div className="border p-4  gap-2 ">
       <div className="flex  ">
@@ -32,7 +32,7 @@ export default function Event({ event,fetchData }) {
           })}
         </div>
       </div>
-      <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+      <Dialog open={isOpenEditModal} onOpenChange={setIsOpenEditModal}>
         <div className="flex  items-center">
           <DialogTrigger>
             <div className="flex border gap-2  p-2 my-2 rounded-md cursor-pointer ">
@@ -43,7 +43,7 @@ export default function Event({ event,fetchData }) {
             </div>
           </DialogTrigger>
 
-          <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+          <Dialog open={isOpenDeleteModal} onOpenChange={setIsOpenDeleteModal}>
             <DialogTrigger>
               <div className="flex border gap-2  p-2 my-2  ml-2 rounded-md text-red-400 cursor-pointer ">
                 <div>
@@ -52,10 +52,24 @@ export default function Event({ event,fetchData }) {
                 <div>Delete</div>
               </div>
             </DialogTrigger>
-            <DeleteModal id={event.id} className="hidden"  open={openDelete} onOpenChange={setOpenDelete} fetchData={fetchData}/>
+            <DeleteModal
+              id={event.id}
+              className="hidden"
+              onSuccess={() => {
+                setIsOpenDeleteModal(false);
+                refreshCurrentPage();
+              }}
+            />
           </Dialog>
 
-          <EditModal id={event.id} className="hidden"  open={openEdit} onOpenChange={setOpenEdit} fetchData={fetchData}/>
+          <EditModal
+            id={event.id}
+            className="hidden"
+            onSuccess={() => {
+              setIsOpenEditModal(false);
+              refreshCurrentPage();
+            }}
+          />
         </div>
       </Dialog>
     </div>

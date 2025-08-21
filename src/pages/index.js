@@ -19,7 +19,7 @@ export default function page() {
   const [events, setEvents] = useState([]);
   const { updateCookies } = useContext(AuthContext);
   // const [page, setPage] = useState(1);
-    const [open, setOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -60,7 +60,11 @@ export default function page() {
   const router = useRouter();
   const currentPage = parseInt(router.query.page) || 1;
   const pageSize = parseInt(router.query.pageSize) || 2;
-  const fetchData = async (page = currentPage, size = pageSize) => {
+ 
+  const fetchData = async (page = currentPage, size = pageSize, forceRefresh = false) => {
+    if(forceRefresh){
+      setIsLoading(true);
+    }
     try {
       const response = await fetch(
         `http://localhost:3000/api/eventList/?page=${page}&pageSize=${size}`,
@@ -96,6 +100,12 @@ export default function page() {
     }
   };
 
+  const handleSync = ()=>{
+    fetchData(currentPage, pageSize, true);
+  }
+  const refreshCurrentPage = ()=>{
+    fetchData(currentPage, pageSize, false)
+  }
   const statusBarItems = [
     {
       status: "total",
@@ -193,8 +203,8 @@ export default function page() {
   }
   return (
     <div className="grid text-md mx-8  sm:mx-36  ">
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DashboardHeader fetchData={fetchData} />
+      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <DashboardHeader fetchData={handleSync}  />
         <StatusBar items={statusBarItems} />
         <div className="grid mx-2 mt-2 border rounded-md ">
           <div className="grid ">
@@ -208,14 +218,17 @@ export default function page() {
               (counts.pending > 0 ? (
                 events
                   .map((event, i) => {
-                    return <Event event={event} key={i} fetchData={fetchData}/>;
+                    return <Event event={event} key={i} refreshCurrentPage={refreshCurrentPage}/>;
                   })
               ) : (
-                <EmptyEvent />
+                <EmptyEvent onCreateClick={() => setIsCreateModalOpen(true)} />
               ))}
           </div>
         </div>
-        <CreateModal  open={open} onOpenChange={setOpen} fetchData={fetchData}/>
+        <CreateModal onSuccess={()=>{
+          setIsCreateModalOpen(false);
+          refreshCurrentPage()
+        }}/>
       </Dialog>
       {pagination.totalPages > 1 && (
         <div className="md:fixed left-48 right-48 bottom-22  mx-auto ">
