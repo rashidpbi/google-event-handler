@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -8,11 +8,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-export default function PaginationComponent({paginationProps}) {
-    const {totalPages,page,setPage}= paginationProps
+import { PaginationWithLinks } from "./pagination-with-links";
+
+export default function PaginationComponent({ paginationProps }) {
+
+
+  const {totalPages,page,setPage}= paginationProps
   return (
     <div className=" ">
-       <Pagination>
+      <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
@@ -24,7 +28,8 @@ export default function PaginationComponent({paginationProps}) {
               <PaginationLink
                 href="#"
                 onClick={() => setPage(i + 1)}
-                isActive={page === i + 1}
+                // isActive={page === i + 1}
+                 isActive={page === i + 1}
               >
                 {i + 1}
               </PaginationLink>
@@ -41,6 +46,7 @@ export default function PaginationComponent({paginationProps}) {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
+      {/* <PaginationWithLinks  /> */}
     </div>
-  )
+  );
 }
