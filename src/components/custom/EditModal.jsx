@@ -30,15 +30,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
-export default function EditModal({ id ,onSuccess }) {
+export default function EditModal({ id ,onSuccess,event }) {
+  console.log("event: ", event);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      summary: "",
-      location: "",
-      description: "",
-      start: new Date(),
-      end: new Date(),
+      summary: event.summary,
+      location: event.location,
+      description: event.description,
+      start: new Date(event.start.dateTime || event.start.date),
+      end: new Date(event.end.dateTime || event.end.date),
     },
   });
   const onSubmit = async (values) => {

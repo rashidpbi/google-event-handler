@@ -132,7 +132,7 @@ export default function page() {
     const allCookies = document.cookie;
     updateCookies(allCookies);
     const handleLocalStorage = () => {
-      console.log("pagination: ", pagination);
+      
       const stored = localStorage.getItem("events");
       if (stored && stored !== "undefined" && stored !== "null") {
         try {
@@ -190,6 +190,7 @@ export default function page() {
       }
       return false;
     };
+    console.log("pagination: ", pagination);
     if (!handleLocalStorage()) {
       fetchData(currentPage, pageSize);
     }

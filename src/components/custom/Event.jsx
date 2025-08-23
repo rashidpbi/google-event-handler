@@ -63,12 +63,14 @@ export default function Event({ event, refreshCurrentPage }) {
           </Dialog>
 
           <EditModal
+            key={event.id}
             id={event.id}
             className="hidden"
             onSuccess={() => {
               setIsOpenEditModal(false);
               refreshCurrentPage();
             }}
+            event={event}
           />
         </div>
       </Dialog>

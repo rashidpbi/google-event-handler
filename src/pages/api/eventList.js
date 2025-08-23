@@ -5,7 +5,7 @@ import getBackendErrorResponseObject from "@/utils/getBackendErrorResponseObject
 export default async function handler(req, res) {
   function getFirstDayOfLastMonth() {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() - 1, 25).toISOString();
+    return new Date(now.getFullYear(), now.getMonth() - 1, 30).toISOString();
   }
   const {
     google_access_token,
