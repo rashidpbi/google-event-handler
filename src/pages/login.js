@@ -18,13 +18,6 @@ export default function Page() {
   useEffect(() => {
     const refresh_token = Cookies.get("refresh_token");
     const wasLoggedOut = localStorage.getItem("loggedOutDueToTokenIssue");
-    // console.log(
-    //   "refresh_token:",
-    //   refresh_token,
-    //   "wasLoggedOut:",
-    //   !wasLoggedOut
-    // );
-
     if (refresh_token && wasLoggedOut !== "true") {
       window.location.href = "http://localhost:3000";
     }

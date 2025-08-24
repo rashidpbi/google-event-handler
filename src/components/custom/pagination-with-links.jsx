@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
+import { useCallback } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useRouter } from 'next/router';
-import { cn } from '@/lib/utils';
+import { useRouter } from "next/router";
+import { cn } from "@/lib/utils";
 
 export function PaginationWithLinks({
   pageSizeSelectOptions,
@@ -36,7 +36,7 @@ export function PaginationWithLinks({
 
   const buildLink = useCallback(
     (newPage) => {
-      const key = pageSearchParam || 'page';
+      const key = pageSearchParam || "page";
       const newSearchParams = new URLSearchParams(query);
       newSearchParams.set(key, String(newPage));
       return `${pathname}?${newSearchParams.toString()}`;
@@ -46,7 +46,7 @@ export function PaginationWithLinks({
 
   const navToPageSize = useCallback(
     (newPageSize) => {
-      const key = pageSizeSelectOptions?.pageSizeSearchParam || 'pageSize';
+      const key = pageSizeSelectOptions?.pageSizeSearchParam || "pageSize";
       const newSearchParams = new URLSearchParams(query);
       newSearchParams.set(key, String(newPageSize));
       router.push(`${pathname}?${newSearchParams.toString()}`);
@@ -132,7 +132,7 @@ export function PaginationWithLinks({
           />
         </div>
       )}
-      <Pagination className={cn({ 'md:justify-end': pageSizeSelectOptions })}>
+      <Pagination className={cn({ "md:justify-end": pageSizeSelectOptions })}>
         <PaginationContent className="max-sm:gap-0">
           <PaginationItem>
             <PaginationPrevious
@@ -140,7 +140,7 @@ export function PaginationWithLinks({
               aria-disabled={page === 1}
               tabIndex={page === 1 ? -1 : undefined}
               className={
-                page === 1 ? 'pointer-events-none opacity-50' : undefined
+                page === 1 ? "pointer-events-none opacity-50" : undefined
               }
             />
           </PaginationItem>
@@ -152,7 +152,7 @@ export function PaginationWithLinks({
               tabIndex={page === totalPageCount ? -1 : undefined}
               className={
                 page === totalPageCount
-                  ? 'pointer-events-none opacity-50'
+                  ? "pointer-events-none opacity-50"
                   : undefined
               }
             />

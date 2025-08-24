@@ -28,13 +28,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 
-export default function CreateModal({onSuccess}) {
-
+export default function CreateModal({ onSuccess }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,8 +63,8 @@ export default function CreateModal({onSuccess}) {
       // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
       currEvents.push(responseData.data);
       localStorage.setItem("events", JSON.stringify(currEvents));
-     
-      if(onSuccess) {
+
+      if (onSuccess) {
         onSuccess();
       }
     }

@@ -6,7 +6,6 @@ import CreateModal from "@/components/custom/CreateModal";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 import Event from "@/components/custom/Event";
 import EmptyEvent from "@/components/custom/EmptyEvent";
-import PaginationComponent from "@/components/custom/PaginationComponent";
 import ReminderHeader from "@/components/custom/ReminderHeader";
 import DashboardHeader from "@/components/custom/DashboardHeader";
 import StatusBar from "@/components/custom/StatusBar";
@@ -18,7 +17,6 @@ export default function page() {
   const [error, setError] = useState(false);
   const [events, setEvents] = useState([]);
   const { updateCookies } = useContext(AuthContext);
-  // const [page, setPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -31,38 +29,16 @@ export default function page() {
     completed: 0,
     total: 0,
   });
-  // const getEventCounts = (events = []) => {
-  //   const now = new Date();
-  //   let pending = 0;
-  //   let completed = 0;
-  //   events.forEach((event) => {
-  //     if (!event.start) return;
-
-  //     const eventDateStr = event.start.dateTime || event.start.date;
-  //     if (!eventDateStr) return;
-
-  //     const eventDate = new Date(eventDateStr);
-  //     if (eventDate > now) pending++;
-  //     else completed++;
-  //   });
-
-  //   return { pending, completed, total: events.length };
-  // };
-  // const { pending, completed, total } = getEventCounts(events);
-  // const totalPages =
-  //   pending > 0
-  //     ? Math.ceil(
-  //         events.filter(
-  //           (event) => new Date(event?.start?.dateTime) > new Date()
-  //         ).length / limit
-  //       )
-  //     : 0;
   const router = useRouter();
   const currentPage = parseInt(router.query.page) || 1;
   const pageSize = parseInt(router.query.pageSize) || 2;
- 
-  const fetchData = async (page = currentPage, size = pageSize, forceRefresh = false) => {
-    if(forceRefresh){
+
+  const fetchData = async (
+    page = currentPage,
+    size = pageSize,
+    forceRefresh = false
+  ) => {
+    if (forceRefresh) {
       setIsLoading(true);
     }
     try {
@@ -100,12 +76,12 @@ export default function page() {
     }
   };
 
-  const handleSync = ()=>{
+  const handleSync = () => {
     fetchData(currentPage, pageSize, true);
-  }
-  const refreshCurrentPage = ()=>{
-    fetchData(currentPage, pageSize, false)
-  }
+  };
+  const refreshCurrentPage = () => {
+    fetchData(currentPage, pageSize, false);
+  };
   const statusBarItems = [
     {
       status: "total",
@@ -127,12 +103,9 @@ export default function page() {
     },
   ];
   useEffect(() => {
-    // const url = new URL(window.location);
-    // console.log("page: ", url.searchParams.get("page"));
     const allCookies = document.cookie;
     updateCookies(allCookies);
     const handleLocalStorage = () => {
-      
       const stored = localStorage.getItem("events");
       if (stored && stored !== "undefined" && stored !== "null") {
         try {
@@ -190,50 +163,55 @@ export default function page() {
       }
       return false;
     };
-    console.log("pagination: ", pagination);
     if (!handleLocalStorage()) {
       fetchData(currentPage, pageSize);
     }
   }, [currentPage, pageSize]);
-
-  if (isLoading) {
-    return <div>data loading ....</div>;
-  }
   if (error) {
     return <div>error loading data</div>;
   }
   return (
     <div className="grid text-md mx-8  sm:mx-36  ">
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DashboardHeader fetchData={handleSync}  />
+        <DashboardHeader fetchData={handleSync} />
         <StatusBar items={statusBarItems} />
+        {
+                isLoading && <div>Loading...</div>
+              }
         <div className="grid mx-2 mt-2 border rounded-md ">
           <div className="grid ">
-            {events &&
+            {!isLoading &&  events &&
               (counts.pending > 0 ? (
                 <ReminderHeader n={events ? counts.pending : 0} />
               ) : (
                 ""
               ))}
-            {events &&
+              
+            {!isLoading &&   events &&
               (counts.pending > 0 ? (
-                events
-                  .map((event, i) => {
-                    return <Event event={event} key={i} refreshCurrentPage={refreshCurrentPage}/>;
-                  })
+                events.map((event, i) => {
+                  return (
+                    <Event
+                      event={event}
+                      key={i}
+                      refreshCurrentPage={refreshCurrentPage}
+                    />
+                  );
+                })
               ) : (
                 <EmptyEvent onCreateClick={() => setIsCreateModalOpen(true)} />
               ))}
           </div>
         </div>
-        <CreateModal onSuccess={()=>{
-          setIsCreateModalOpen(false);
-          refreshCurrentPage()
-        }}/>
+        <CreateModal
+          onSuccess={() => {
+            setIsCreateModalOpen(false);
+            refreshCurrentPage();
+          }}
+        />
       </Dialog>
       {pagination.totalPages > 1 && (
         <div className="md:fixed left-48 right-48 bottom-22  mx-auto ">
-          {/* <PaginationComponent paginationProps={{totalPages, page,setPage} } /> */}
           <PaginationWithLinks
             pageSize={pagination.pageSize}
             totalCount={pagination.totalEvents}

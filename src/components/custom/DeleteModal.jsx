@@ -35,7 +35,6 @@ export default function DeleteModal({ id, onSuccess }) {
         if (onSuccess) {
           onSuccess();
         }
-        // window.location.href = "http://localhost:3000";
       }
     } catch (error) {
       console.log("error in deleting event", error);

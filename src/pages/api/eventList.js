@@ -58,28 +58,25 @@ export default async function handler(req, res) {
         const eventDate = new Date(eventDateStr);
         return eventDate <= now;
       });
-      
+
       const totalEvents = pendingEvents.length;
       const totalPages = Math.ceil(totalEvents / pageSize);
-      console.log("totalpages: ",totalPages)
+      console.log("totalpages: ", totalPages);
       const start = (currentPage - 1) * pageSize;
       const paginatedEvents = pendingEvents.slice(start, start + pageSize);
-      // console.log('paginatedEvents:', paginatedEvents);
       console.log("totalEvents:", totalEvents);
-      const pagination = {totalEvents, pageSize, currentPage, totalPages};
+      const pagination = { totalEvents, pageSize, currentPage, totalPages };
       const counts = {
         pending: pendingEvents.length,
         completed: completedEvents.length,
         total: allEvents.length,
-      }
-      res
-        .status(200)
-        .json({
-          events: paginatedEvents,
-          pagination,
-          allEvents,
-          counts
-        });
+      };
+      res.status(200).json({
+        events: paginatedEvents,
+        pagination,
+        allEvents,
+        counts,
+      });
     } catch (error) {
       const { responseObject } = getBackendErrorResponseObject(error);
 
