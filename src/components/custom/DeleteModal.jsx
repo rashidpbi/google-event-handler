@@ -12,7 +12,7 @@ export default function DeleteModal({ id, onSuccess }) {
   const onDelete = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/eventDeletion/${id}`,
+        `/api/eventDeletion/${id}`,
         {
           method: "POST",
           headers: {

@@ -8,6 +8,6 @@ export default async function handleFrontendResponseObject(responseData) {
     responseData.error == "missing access token"
   ) {
     localStorage.setItem("loggedOutDueToTokenIssue", "true");
-    window.location.href = "http://localhost:3000/login";
+    window.location.href = "/login";
   }
 }

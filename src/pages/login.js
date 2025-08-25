@@ -21,7 +21,7 @@ export default function Page() {
     const refresh_token = Cookies.get("refresh_token");
     const wasLoggedOut = localStorage.getItem("loggedOutDueToTokenIssue");
     if (refresh_token && wasLoggedOut !== "true") {
-      window.location.href = "http://localhost:3000";
+      window.location.href = "/";
     }
   }, []);
 

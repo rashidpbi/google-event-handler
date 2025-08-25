@@ -44,7 +44,7 @@ export default function EditModal({ id, onSuccess, event }) {
   const onSubmit = async (values) => {
     // console.log("values: ", values);
     const response = await fetch(
-      `http://localhost:3000/api/eventUpdation/${id}`,
+      `/api/eventUpdation/${id}`,
       {
         method: "POST",
         headers: {
@@ -82,7 +82,7 @@ export default function EditModal({ id, onSuccess, event }) {
       // );
       localStorage.setItem("events", JSON.stringify(filteredCurrEvents));
       // console.log("/events in local storage: ", localStorage.getItem("events"));
-      // window.location.href = "http://localhost:3000";
+      // window.location.href = "/";
       if (onSuccess) {
         onSuccess();
       }

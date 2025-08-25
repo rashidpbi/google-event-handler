@@ -44,7 +44,7 @@ export default function CreateModal({ onSuccess }) {
     },
   });
   const onSubmit = async (values) => {
-    const response = await fetch("http://localhost:3000/api/eventCreation", {
+    const response = await fetch("/api/eventCreation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

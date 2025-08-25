@@ -13,6 +13,11 @@ import { useRouter } from "next/router";
 import { PaginationWithLinks } from "@/components/custom/pagination-with-links";
 
 export default function page() {
+  //loading 
+  //error
+  //pagination
+  //status counts
+  //
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [events, setEvents] = useState([]);
@@ -32,7 +37,26 @@ export default function page() {
   const router = useRouter();
   const currentPage = parseInt(router.query.page) || 1;
   const pageSize = parseInt(router.query.pageSize) || 2;
-
+  const statusBarItems = [
+    {
+      status: "total",
+      n: counts.total,
+      Icon: <ChartColumn />,
+      iconColor: "text-blue-500",
+    },
+    {
+      status: "pending",
+      n: counts.pending,
+      Icon: <Clock4 />,
+      iconColor: "text-red-400",
+    },
+    {
+      status: "completed",
+      n: counts.completed,
+      Icon: <CircleCheckBig />,
+      iconColor: "text-green-400",
+    },
+  ];
   const fetchData = async (
     page = currentPage,
     size = pageSize,
@@ -43,7 +67,7 @@ export default function page() {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/api/eventList/?page=${page}&pageSize=${size}`,
+        `/api/eventList/?page=${page}&pageSize=${size}`,
         {
           method: "GET",
           headers: {
@@ -82,26 +106,7 @@ export default function page() {
   const refreshCurrentPage = () => {
     fetchData(currentPage, pageSize, false);
   };
-  const statusBarItems = [
-    {
-      status: "total",
-      n: counts.total,
-      Icon: <ChartColumn />,
-      iconColor: "text-blue-500",
-    },
-    {
-      status: "pending",
-      n: counts.pending,
-      Icon: <Clock4 />,
-      iconColor: "text-red-400",
-    },
-    {
-      status: "completed",
-      n: counts.completed,
-      Icon: <CircleCheckBig />,
-      iconColor: "text-green-400",
-    },
-  ];
+
   useEffect(() => {
     const allCookies = document.cookie;
     updateCookies(allCookies);
@@ -175,19 +180,19 @@ export default function page() {
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DashboardHeader fetchData={handleSync} />
         <StatusBar items={statusBarItems} />
-        {
-                isLoading && <div>Loading...</div>
-              }
+        {isLoading && <div>Loading...</div>}
         <div className="grid mx-2 mt-2 border rounded-md ">
           <div className="grid ">
-            {!isLoading &&  events &&
+            {!isLoading &&
+              events &&
               (counts.pending > 0 ? (
                 <ReminderHeader n={events ? counts.pending : 0} />
               ) : (
                 ""
               ))}
-              
-            {!isLoading &&   events &&
+
+            {!isLoading &&
+              events &&
               (counts.pending > 0 ? (
                 events.map((event, i) => {
                   return (
