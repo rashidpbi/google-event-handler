@@ -216,11 +216,6 @@ export default function page() {
             pageSize={pagination.pageSize}
             totalCount={pagination.totalEvents}
             page={pagination.currentPage}
-            //   pageSizeSelectOptions={{
-            //     pageSizeOptions: [2, 5, 10, 20],
-            //     pageSizeSearchParam: "pageSize",
-            //   }
-            // }
           />
         </div>
       )}

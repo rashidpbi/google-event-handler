@@ -1,5 +1,7 @@
 import Cookies from "js-cookie";
+import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,10 +26,38 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <Button onClick={handleGoogleLogin} disabled={isLoading}>
-        {isLoading ? "Redirecting..." : "Login with Google"}
-      </Button>
+    <div className="grid size-120  mx-auto  ">
+      <div className="grid gap-2  w-80  px-auto mx-auto content-center items-center  ">
+        <div className="flex bg-blue-500 size-12 justify-center items-center rounded-md mx-auto">
+          <div>
+            <Calendar className="text-white" />
+          </div>
+        </div>
+        <div className="flex justify-center w-full  font-bold text-2xl">
+          Event Manager
+        </div>
+        <div className="flex justify-center w-full ">
+          Sign in to manage your calendar events
+        </div>
+      </div>
+
+      
+        <div className="grid gap-3   h-30 content-center justify-center shadow-lg">
+          <div className="flex justify-center my-2 ">
+            <Button
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+              className=" bg-white text-black border w-80 text-sm border-gray-400  hover:bg-gray-800  hover:text-white "
+            >
+              <FcGoogle /> {isLoading ? "Redirecting..." : "Login with Google"}
+            </Button>
+          </div>
+          
+        <div className="flex justify-center  text-gray-500  my-2">
+          By signing in, you agree to sync your Google Calendar events
+        </div>
+        </div>
+     
     </div>
   );
 }
