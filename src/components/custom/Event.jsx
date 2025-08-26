@@ -35,7 +35,7 @@ export default function Event({ event, refreshCurrentPage }) {
       <Dialog open={isOpenEditModal} onOpenChange={setIsOpenEditModal}>
         <div className="flex  items-center">
           <DialogTrigger>
-            <div className="flex border gap-2  p-2 my-2 rounded-md cursor-pointer ">
+            <div className="flex border border-gray-300 gap-2  p-2 my-2 rounded-md cursor-pointer ">
               <div>
                 <SquarePen />
               </div>
@@ -45,7 +45,7 @@ export default function Event({ event, refreshCurrentPage }) {
 
           <Dialog open={isOpenDeleteModal} onOpenChange={setIsOpenDeleteModal}>
             <DialogTrigger>
-              <div className="flex border gap-2  p-2 my-2  ml-2 rounded-md text-red-400 cursor-pointer ">
+              <div className="flex border border-gray-300 gap-2  p-2 my-2  ml-2 rounded-md text-red-600 cursor-pointer ">
                 <div>
                   <Trash2 />
                 </div>

@@ -11,6 +11,7 @@ import DashboardHeader from "@/components/custom/DashboardHeader";
 import StatusBar from "@/components/custom/StatusBar";
 import { useRouter } from "next/router";
 import { PaginationWithLinks } from "@/components/custom/pagination-with-links";
+import EventSkeleton from "@/components/custom/EventSkeleton";
 
 export default function page() {
   //loading 
@@ -48,7 +49,7 @@ export default function page() {
       status: "pending",
       n: counts.pending,
       Icon: <Clock4 />,
-      iconColor: "text-red-400",
+      iconColor: "text-red-600",
     },
     {
       status: "completed",
@@ -178,9 +179,15 @@ export default function page() {
   return (
     <div className="grid text-md mx-8  sm:mx-36  ">
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DashboardHeader fetchData={handleSync} />
-        <StatusBar items={statusBarItems} />
-        {isLoading && <div>Loading...</div>}
+        <div>
+          <DashboardHeader fetchData={handleSync} />
+          <StatusBar items={statusBarItems} />
+        </div>
+        {isLoading &&  <div>
+    {[...Array(2)].map((_, i) => (
+      <EventSkeleton key={i} />
+    ))}
+  </div>}
         <div className="grid mx-2 mt-2 border rounded-md ">
           <div className="grid ">
             {!isLoading &&

@@ -5,9 +5,9 @@ import { Bell, Calendar, Plus } from "lucide-react";
 export default function DashboardHeader({ fetchData }) {
   return (
     <div className=" flex flex-col sm:flex-row sm:justify-between">
-      <div className="flex flex-col  px-4 items-start  ">
+      <div className="flex flex-col  px-4 items-">
         <div className="flex   ">
-          <div className="m-2">
+          <div className="m-2 ml-0 ">
             <Bell className="size-8" />
           </div>
           <div className="font-bold  content-center m-2 text-2xl">
