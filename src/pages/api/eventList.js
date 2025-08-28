@@ -1,3 +1,4 @@
+//api/eventList.js
 import { google } from "googleapis";
 import oauth2Client from "@/utils/google-auth";
 import getBackendErrorResponseObject from "@/utils/getBackendErrorResponseObject";
@@ -32,10 +33,10 @@ export default async function handler(req, res) {
         // timeMin: "2025-07-01T00:00:00.000Z",
       });
       // console.log('calendar events:', data.items);
-      console.log("req.query: ", req.query.page);
+      // console.log("req.query: ", req.query.page);
       const currentPage = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 2;
-      console.log("page:", currentPage, "pageSize:", pageSize);
+      // console.log("page:", currentPage, "pageSize:", pageSize);
       const allEvents = data.items || [];
       // Filter for pending events (future events only)
       const now = new Date();
@@ -61,10 +62,10 @@ export default async function handler(req, res) {
 
       const totalEvents = pendingEvents.length;
       const totalPages = Math.ceil(totalEvents / pageSize);
-      console.log("totalpages: ", totalPages);
+      // console.log("totalpages: ", totalPages);
       const start = (currentPage - 1) * pageSize;
       const paginatedEvents = pendingEvents.slice(start, start + pageSize);
-      console.log("totalEvents:", totalEvents);
+      // console.log("totalEvents:", totalEvents);
       const pagination = { totalEvents, pageSize, currentPage, totalPages };
       const counts = {
         pending: pendingEvents.length,

@@ -1,112 +1,62 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "@/context/authContext";
 import { ChartColumn, Clock4, CircleCheckBig } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import CreateModal from "@/components/custom/CreateModal";
-import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 import Event from "@/components/custom/Event";
 import EmptyEvent from "@/components/custom/EmptyEvent";
 import ReminderHeader from "@/components/custom/ReminderHeader";
 import DashboardHeader from "@/components/custom/DashboardHeader";
 import StatusBar from "@/components/custom/StatusBar";
-import { useRouter } from "next/router";
 import { PaginationWithLinks } from "@/components/custom/pagination-with-links";
+import { useEvents } from "@/hooks/useEvents";
 import EventSkeleton from "@/components/custom/EventSkeleton";
 
 export default function page() {
-  //loading 
-  //error
-  //pagination
-  //status counts
-  //
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [events, setEvents] = useState([]);
   const { updateCookies } = useContext(AuthContext);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalEvents: 0,
-    pageSize: 2,
-  });
-  const [counts, setCounts] = useState({
-    pending: 0,
-    completed: 0,
-    total: 0,
-  });
-  const router = useRouter();
-  const currentPage = parseInt(router.query.page) || 1;
-  const pageSize = parseInt(router.query.pageSize) || 2;
-  const statusBarItems = [
-    {
-      status: "total",
-      n: counts.total,
-      Icon: <ChartColumn />,
-      iconColor: "text-blue-500",
-    },
-    {
-      status: "pending",
-      n: counts.pending,
-      Icon: <Clock4 />,
-      iconColor: "text-red-600",
-    },
-    {
-      status: "completed",
-      n: counts.completed,
-      Icon: <CircleCheckBig />,
-      iconColor: "text-green-400",
-    },
-  ];
-  const fetchData = async (
-    page = currentPage,
-    size = pageSize,
-    forceRefresh = false
-  ) => {
-    if (forceRefresh) {
-      setIsLoading(true);
-    }
-    try {
-      const response = await fetch(
-        `/api/eventList/?page=${page}&pageSize=${size}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const responseData = await response.json();
 
-      if (!response.ok) {
-        handleFrontendResponseObject(responseData);
-      }
-      if (response.ok) {
-        console.log("response data: ", responseData);
-        setPagination(responseData.pagination);
-        setEvents(responseData.events);
-        setCounts(responseData.counts);
-        if (responseData.allEvents) {
-          localStorage.setItem(
-            "events",
-            JSON.stringify(responseData.allEvents)
-          );
-        }
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.log("error fetching data: ", error);
-      setError(true);
-      setIsLoading(false);
-    }
-  };
+  const {
+    isLoading,
+    setIsLoading,
+    error,
+    setError,
+    counts,
+    setCounts,
+    events,
+    setEvents,
+    currentPage,
+    pageSize,
+    pagination,
+    setPagination,
+    fetchData,
+    handleSync,
+    refreshCurrentPage,
+  } = useEvents();
 
-  const handleSync = () => {
-    fetchData(currentPage, pageSize, true);
-  };
-  const refreshCurrentPage = () => {
-    fetchData(currentPage, pageSize, false);
-  };
+  const statusBarItems = useMemo(
+    () => [
+      {
+        status: "total",
+        n: counts.total,
+        Icon: <ChartColumn />,
+        iconColor: "text-blue-500",
+      },
+      {
+        status: "pending",
+        n: counts.pending,
+        Icon: <Clock4 />,
+        iconColor: "text-red-600",
+      },
+      {
+        status: "completed",
+        n: counts.completed,
+        Icon: <CircleCheckBig />,
+        iconColor: "text-green-400",
+      },
+    ],
+    [counts]
+  );
 
   useEffect(() => {
     const allCookies = document.cookie;
@@ -183,25 +133,14 @@ export default function page() {
           <DashboardHeader fetchData={handleSync} />
           <StatusBar items={statusBarItems} />
         </div>
-        {isLoading &&  <div>
-    {[...Array(2)].map((_, i) => (
-      <EventSkeleton key={i} />
-    ))}
-  </div>}
+        {isLoading && <EventSkeleton />}
         <div className="grid mx-2 mt-2 border rounded-md ">
-          <div className="grid ">
-            {!isLoading &&
-              events &&
-              (counts.pending > 0 ? (
+          {!isLoading &&
+            events &&
+            (counts.pending > 0 ? (
+              <div>
                 <ReminderHeader n={events ? counts.pending : 0} />
-              ) : (
-                ""
-              ))}
-
-            {!isLoading &&
-              events &&
-              (counts.pending > 0 ? (
-                events.map((event, i) => {
+                {events.map((event, i) => {
                   return (
                     <Event
                       event={event}
@@ -209,11 +148,11 @@ export default function page() {
                       refreshCurrentPage={refreshCurrentPage}
                     />
                   );
-                })
-              ) : (
-                <EmptyEvent onCreateClick={() => setIsCreateModalOpen(true)} />
-              ))}
-          </div>
+                })}
+              </div>
+            ) : (
+              <EmptyEvent onCreateClick={() => setIsCreateModalOpen(true)} />
+            ))}
         </div>
         <CreateModal
           onSuccess={() => {

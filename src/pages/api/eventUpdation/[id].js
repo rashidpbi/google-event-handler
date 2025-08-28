@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       refresh_token,
     } = req.cookies;
     const { values } = req.body;
-    console.log("values.: ", values);
+    // console.log("values.: ", values);
     if (!google_access_token) {
       res.status(403).send({ error: "missing access token" });
       return;
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
           },
         },
       });
-      console.log("result.data:", result.data);
+      // console.log("result.data:", result.data);
       res.status(200).json({ updatedEventData: result.data });
     } catch (error) {
       const { responseObject } = getBackendErrorResponseObject(error);
