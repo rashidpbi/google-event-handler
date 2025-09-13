@@ -1,10 +1,7 @@
 //pages/index.js
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-
-import { Dialog } from "@/components/ui/dialog";
-
 
 import { useEventStore } from "@/store/eventStore";
 
@@ -16,8 +13,7 @@ import EventSkeleton from "@/components/custom/EventSkeleton";
 
 import EventList from "@/components/custom/EventList";
 
-export default function page() {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+export default function Page() {
   const router = useRouter();
   const currentPage = parseInt(router.query.page) || 1;
   const pageSize = parseInt(router.query.pageSize) || 2;
@@ -30,12 +26,12 @@ export default function page() {
     getStatusBarItems,
     forceRefreshEvents,
     updateCookies,
+    setIsCreateModalOpen,
   } = useEventStore();
 
   const handleSync = useCallback(() => {
     forceRefreshEvents(currentPage, pageSize);
   }, [forceRefreshEvents, currentPage, pageSize]);
-
 
   const refreshCurrentPage = useCallback(async () => {
     console.log("refresh called");
@@ -79,24 +75,22 @@ export default function page() {
   }
   return (
     <div className="grid text-md mx-8  sm:mx-36  ">
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <div>
-          <DashboardHeader handleSync={handleSync} />
-          <StatusBar items={getStatusBarItems()} />
-        </div>
+      <div>
+        <DashboardHeader handleSync={handleSync} />
+        <StatusBar items={getStatusBarItems()} />
+      </div>
 
-        {isLoading && <EventSkeleton />}
-        <EventList
-          onCreateClick={() => setIsCreateModalOpen(true)}
-          refreshCurrentPage={refreshCurrentPage}
-        />
-        <CreateModal
-          onSuccess={() => {
-            setIsCreateModalOpen(false);
-            refreshCurrentPage();
-          }}
-        />
-      </Dialog>
+      {isLoading && <EventSkeleton />}
+      <EventList
+        onCreateClick={() => setIsCreateModalOpen(true)}
+        refreshCurrentPage={refreshCurrentPage}
+      />
+      <CreateModal
+        onSuccess={() => {
+          setIsCreateModalOpen(false);
+          refreshCurrentPage();
+        }}
+      />
       {pagination.totalPages > 1 && (
         <div className="md:fixed left-48 right-48 bottom-22  mx-auto">
           <PaginationWithLinks

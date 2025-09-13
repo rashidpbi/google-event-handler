@@ -2,8 +2,10 @@
 import React from "react";
 import { DialogTrigger } from "../ui/dialog";
 import { Bell, Calendar, Plus } from "lucide-react";
+import { useEventStore } from "@/store/eventStore";
 
 export default function DashboardHeader({ handleSync }) {
+  const { isCreateModalOpen, setIsCreateModalOpen } = useEventStore();
   return (
     <div className=" flex flex-col sm:flex-row sm:justify-between">
       <div className="flex flex-col  px-4 items-">
@@ -34,14 +36,14 @@ export default function DashboardHeader({ handleSync }) {
           </div>
         </div>
         <div className="flex cursor-pointer  items-center justify-center m-2">
-          <DialogTrigger asChild>
-            <div className="flex items-center  p-2 border rounded-md bg-black dark:bg-white dark:text-black text-white">
+          {/* <DialogTrigger asChild> */}
+            <div className="flex items-center  p-2 border rounded-md bg-black dark:bg-white dark:text-black text-white" onClick={() => setIsCreateModalOpen(true)}>
               <div>
                 <Plus />
               </div>
               <div className="m-2">Add reminder</div>
             </div>
-          </DialogTrigger>
+          {/* </DialogTrigger> */}
         </div>
       </div>
     </div>

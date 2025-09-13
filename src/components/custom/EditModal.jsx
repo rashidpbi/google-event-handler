@@ -1,3 +1,4 @@
+//src/components/custom/EditModal.jsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +22,7 @@ const formSchema = z.object({
 });
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -30,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
+import { useEventStore } from "@/store/eventStore";
 export default function EditModal({ id, onSuccess, event }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -41,60 +44,30 @@ export default function EditModal({ id, onSuccess, event }) {
       end: new Date(event.end.dateTime || event.end.date),
     },
   });
+  const { isOpenEditModal, setIsOpenEditModal } = useEventStore();
   const onSubmit = async (values) => {
-    // console.log("values: ", values);
-    const response = await fetch(
-      `/api/eventUpdation/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ values }),
-      }
-    );
+    const response = await fetch(`/api/eventUpdation/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ values }),
+    });
     const responseData = await response.json();
     if (!response.ok) {
       if (!response.ok) {
         handleFrontendResponseObject(responseData);
       }
     }
-    if (response.ok) {
-      let currEvents = JSON.parse(localStorage.getItem("events"));
-      // console.log("/currEvents:", currEvents);
-      let filteredCurrEvents = currEvents.filter((event) => {
-        // console.log(
-        //   "/ event.id:  ",
-        //   event.id,
-        //   " & ",
-        //   "router.query.id: ",
-        //   router.query.id
-        // );
-        return event.id !== id;
-      }); //to delete older event from list
-      // console.log("/filteredCurrEvents: ", filteredCurrEvents);
-      // console.log("/filteredCurrEvents.length: ", filteredCurrEvents.length);
-      filteredCurrEvents.push(responseData?.updatedEventData); //to add updated event to list
-      // console.log("/filteredCurrEvents after push: ", filteredCurrEvents);
-      // console.log(
-      //   "/length of filteredCurrEvents after push: ",
-      //   filteredCurrEvents.length
-      // );
-      localStorage.setItem("events", JSON.stringify(filteredCurrEvents));
-      // console.log("/events in local storage: ", localStorage.getItem("events"));
-      // window.location.href = "/";
-      if (onSuccess) {
-        onSuccess();
-      }
+
+    if (onSuccess) {
+      onSuccess();
     }
   };
 
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">
-      <>
-        {/* <DialogTrigger asChild>
-                   <Button variant="outline">Open Dialog</Button>
-                 </DialogTrigger> */}
+      <Dialog open={isOpenEditModal} onOpenChange={setIsOpenEditModal}>
         <DialogContent className="sm:max-w-2xl w-full">
           <DialogHeader>
             <div className="flex items-center gap-2">
@@ -228,7 +201,7 @@ export default function EditModal({ id, onSuccess, event }) {
             </form>
           </Form>
         </DialogContent>
-      </>
+      </Dialog>
     </div>
   );
 }

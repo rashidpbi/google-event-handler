@@ -1,5 +1,6 @@
 //store/eventStore.js
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
+import { se } from "date-fns/locale";
 import { ChartColumn, Clock4, CircleCheckBig } from "lucide-react";
 
 import { create } from "zustand";
@@ -60,13 +61,18 @@ export const useEventStore = create((set, get) => ({
     totalEvents: 0,
     pageSize: 2,
   },
+  isCreateModalOpen:false,
+  isOpenEditModal:false,
+  isOpenDeleteModal:false,
   //actions
   setIsLoading: (val) => set({ isLoading: val }),
   setError: (val) => set({ error: val }),
   setEvents: (events) => set({ events }),
   setCounts: (counts) => set({ counts }),
   setPagination: (pagination) => set({ pagination }),
-
+  setIsCreateModalOpen: (isOpen) => set({ isCreateModalOpen: isOpen }),
+  setIsOpenEditModal: (isOpen) => set({ isOpenEditModal: isOpen }),
+  setIsOpenDeleteModal:(isOpen)=>set({ isOpenDeleteModal: isOpen }),
   // Force refresh from API, bypassing localStorage
   refreshEvents: async (currentPage, pageSize) => {
 

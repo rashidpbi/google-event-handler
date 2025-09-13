@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -9,33 +10,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
+import { useEventStore } from "@/store/eventStore";
 export default function DeleteModal({ id, onSuccess }) {
+  const {isOpenDeleteModal,setIsOpenDeleteModal} = useEventStore()
   const onDelete = async (id) => {
     try {
-      const response = await fetch(
-        `/api/eventDeletion/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(id),
-        }
-      );
+      const response = await fetch(`/api/eventDeletion/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(id),
+      });
       const responseData = await response.json();
       console.log("response.ok: ", response.ok);
       if (!response.ok) {
         await handleFrontendResponseObject(responseData);
         return;
       }
-      
-        let currEvents = JSON.parse(localStorage.getItem("events"));
-        const updatedEvents = currEvents.filter((event) => event.id != id);
-        localStorage.setItem("events", JSON.stringify(updatedEvents));
-        if (onSuccess) {
-          onSuccess();
-        }
-        console.log("Event deleted successfully");
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.log("error in deleting event", error);
     }
@@ -43,6 +39,7 @@ export default function DeleteModal({ id, onSuccess }) {
 
   return (
     <div className="justify-center  flex text-center pt-10 flex-col items-center">
+       <Dialog open={isOpenDeleteModal} onOpenChange={setIsOpenDeleteModal}>
       <DialogContent className="sm:max-w-md ">
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
@@ -54,6 +51,7 @@ export default function DeleteModal({ id, onSuccess }) {
           </div>
         </DialogFooter>
       </DialogContent>
+      </Dialog>
     </div>
   );
 }
