@@ -1,3 +1,4 @@
+//utils/getBackendErrorResponseObject.js
 export default function getBackendErrorResponseObject(error) {
   console.error("Google API error:", error);
 

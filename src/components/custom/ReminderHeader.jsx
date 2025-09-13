@@ -1,7 +1,9 @@
+//componenst/custom/Reminderheader.jsx
 import { Clock4 } from "lucide-react";
 import React from "react";
 
 export default function ReminderHeader({ n }) {
+
   return (
     <div className="flex flex-col  text-red-600 break-normal border p-4 bg-red-100">
       <div className="flex font-bold">

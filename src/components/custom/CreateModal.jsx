@@ -1,3 +1,4 @@
+//components/cutom/CreateModal.jsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,21 +54,19 @@ export default function CreateModal({ onSuccess }) {
     });
     const responseData = await response.json();
     if (!response.ok) {
-      if (!response.ok) {
+     
         handleFrontendResponseObject(responseData);
-      }
+      
     }
-    if (response.ok) {
-      let currEvents = JSON.parse(localStorage.getItem("events"));
-      // console.log("currEvents",currEvents)
-      // console.log("Array.isArray(currEvents))",Array.isArray(currEvents))
-      currEvents.push(responseData.data);
-      localStorage.setItem("events", JSON.stringify(currEvents));
+  
+      // let currEvents = JSON.parse(localStorage.getItem("events"));
+      // currEvents.push(responseData.data);
+      // localStorage.setItem("events", JSON.stringify(currEvents));
 
       if (onSuccess) {
         onSuccess();
       }
-    }
+    
   };
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">

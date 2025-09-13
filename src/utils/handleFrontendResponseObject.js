@@ -1,3 +1,4 @@
+//utils/handleFrontendResponseObject.js
 export default async function handleFrontendResponseObject(responseData) {
   console.log("responseData.error: ", responseData.error);
   if (
@@ -5,7 +6,8 @@ export default async function handleFrontendResponseObject(responseData) {
     responseData.error == "invalid_grant" ||
     responseData?.error?.status === "UNAUTHENTICATED" ||
     responseData.error == "No refresh token is set." ||
-    responseData.error == "missing access token"
+    responseData.error == "missing access token" ||
+    responseData.error == "No access token provided"
   ) {
     localStorage.setItem("loggedOutDueToTokenIssue", "true");
     window.location.href = "/login";

@@ -1,3 +1,4 @@
+//components/custom/StatusBar.jsx
 import React from "react";
 import ShowStatus from "./ShowStatus";
 

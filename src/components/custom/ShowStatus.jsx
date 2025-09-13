@@ -1,3 +1,4 @@
+//components/custom/ShwoStatus.jsx
 import React from "react";
 
 export default function ShowStatus({ status, n, Icon, iconColor }) {

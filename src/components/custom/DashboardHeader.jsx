@@ -1,8 +1,9 @@
+//components/cutom/DashboardHeader.jsx
 import React from "react";
 import { DialogTrigger } from "../ui/dialog";
 import { Bell, Calendar, Plus } from "lucide-react";
 
-export default function DashboardHeader({ fetchData }) {
+export default function DashboardHeader({ handleSync }) {
   return (
     <div className=" flex flex-col sm:flex-row sm:justify-between">
       <div className="flex flex-col  px-4 items-">
@@ -23,7 +24,7 @@ export default function DashboardHeader({ fetchData }) {
       <div className="flex gap-2">
         <div className="flex cursor-pointer  items-center justify-center m-2">
           <div
-            onClick={() => fetchData()}
+            onClick={() => handleSync()}
             className="flex items-center p-2 border rounded-md border-zinc-300 dark:border-white "
           >
             <div>

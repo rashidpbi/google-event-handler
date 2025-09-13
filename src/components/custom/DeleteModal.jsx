@@ -1,3 +1,4 @@
+//componets/custom/DeleteModal.jsx
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,18 +25,17 @@ export default function DeleteModal({ id, onSuccess }) {
       const responseData = await response.json();
       console.log("response.ok: ", response.ok);
       if (!response.ok) {
-        if (!response.ok) {
-          handleFrontendResponseObject(responseData);
-        }
+        await handleFrontendResponseObject(responseData);
+        return;
       }
-      if (response.ok) {
+      
         let currEvents = JSON.parse(localStorage.getItem("events"));
         const updatedEvents = currEvents.filter((event) => event.id != id);
         localStorage.setItem("events", JSON.stringify(updatedEvents));
         if (onSuccess) {
           onSuccess();
         }
-      }
+        console.log("Event deleted successfully");
     } catch (error) {
       console.log("error in deleting event", error);
     }
