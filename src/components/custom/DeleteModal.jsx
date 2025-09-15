@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 import { useEventStore } from "@/store/eventStore";
-export default function DeleteModal({ id, onSuccess }) {
-  const {isOpenDeleteModal,setIsOpenDeleteModal} = useEventStore()
+import { useRouter } from "next/router";
+export default function DeleteModal({ id }) {
+  const router = useRouter()
+  const {isOpenDeleteModal,setIsOpenDeleteModal,refreshCurrentPage} = useEventStore()
   const onDelete = async (id) => {
     try {
       const response = await fetch(`/api/eventDeletion/${id}`, {
@@ -29,9 +31,10 @@ export default function DeleteModal({ id, onSuccess }) {
         return;
       }
 
-      if (onSuccess) {
-        onSuccess();
-      }
+
+             setIsOpenDeleteModal(false);
+            refreshCurrentPage(router);
+      
     } catch (error) {
       console.log("error in deleting event", error);
     }

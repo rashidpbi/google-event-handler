@@ -1,8 +1,12 @@
 //components/custom/StatusBar.jsx
 import React from "react";
 import ShowStatus from "./ShowStatus";
+import CreateModal from "./CreateModal";
+import { useEventStore } from "@/store/eventStore";
 
-export default function StatusBar({ items }) {
+export default function StatusBar() {
+  const { getStatusBarItems } = useEventStore();
+  const items = getStatusBarItems();
   return (
     <div className="p-2">
       <div className="flex  justify-left  gap-1">
@@ -16,6 +20,7 @@ export default function StatusBar({ items }) {
           />
         ))}
       </div>
+      <CreateModal />
     </div>
   );
 }

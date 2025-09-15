@@ -3,10 +3,9 @@ import React from "react";
 import { Calendar, Bell, Trash2, SquarePen } from "lucide-react";
 import EditModal from "@/components/custom/EditModal";
 import DeleteModal from "@/components/custom/DeleteModal";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useEventStore } from "@/store/eventStore";
 
-export default function Event({ event, refreshCurrentPage }) {
+export default function Event({ event }) {
   const { setIsOpenEditModal, setIsOpenDeleteModal } = useEventStore();
   return (
     <div className="border p-4  gap-2 ">
@@ -54,23 +53,12 @@ export default function Event({ event, refreshCurrentPage }) {
           <div>Delete</div>
         </div>
 
-        <DeleteModal
-          id={event.id}
-          className="hidden"
-          onSuccess={() => {
-            setIsOpenDeleteModal(false);
-            refreshCurrentPage();
-          }}
-        />
+        <DeleteModal id={event.id} className="hidden" />
 
         <EditModal
           key={event.id}
           id={event.id}
           className="hidden"
-          onSuccess={() => {
-            setIsOpenEditModal(false);
-            refreshCurrentPage();
-          }}
           event={event}
         />
       </div>

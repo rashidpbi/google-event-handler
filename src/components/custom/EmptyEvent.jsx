@@ -1,8 +1,10 @@
 //src/components/custom/EmptyEvent.jsx
 import React from "react";
 import { Plus, Bell } from "lucide-react";
+import { useEventStore } from "@/store/eventStore";
 
-export default function EmptyEvent({ onCreateClick }) {
+export default function EmptyEvent() {
+  const {setIsCreateModalOpen} = useEventStore();
   return (
     <div className="flex flex-col  p-2 text-center justify-center gap-2">
       <div className="flex justify-center  ">
@@ -17,7 +19,7 @@ export default function EmptyEvent({ onCreateClick }) {
       <div className="flex justify-center">
         <div
           className="flex   items-center justify-center bg-black dark:bg-white rounded-md px-2 cursor-pointer"
-          onClick={onCreateClick}
+          onClick={()=>setIsCreateModalOpen(true)}
         >
           <div className="dark:text-black text-white">
             <Plus />

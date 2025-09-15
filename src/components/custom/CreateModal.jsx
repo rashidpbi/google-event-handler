@@ -33,8 +33,9 @@ import {
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 import { useEventStore } from "@/store/eventStore";
+import { useRouter } from "next/router";
 
-export default function CreateModal({ onSuccess }) {
+export default function CreateModal() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,7 +46,10 @@ export default function CreateModal({ onSuccess }) {
       end: new Date(),
     },
   });
-  const { isCreateModalOpen, setIsCreateModalOpen } = useEventStore();
+  const router = useRouter();
+  const { isCreateModalOpen, setIsCreateModalOpen, refreshCurrentPage } =
+    useEventStore();
+
   const onSubmit = async (values) => {
     const response = await fetch("/api/eventCreation", {
       method: "POST",
@@ -58,9 +62,8 @@ export default function CreateModal({ onSuccess }) {
     if (!response.ok) {
       handleFrontendResponseObject(responseData);
     }
-    if (onSuccess) {
-      onSuccess();
-    }
+    setIsCreateModalOpen(false);
+    refreshCurrentPage(router);
   };
   return (
     <div className="justify-center w-full flex text-center pt-10 flex-col items-center">

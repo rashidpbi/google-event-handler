@@ -50,7 +50,6 @@ const paginateEvents = (allEvents, page, pageSize) => {
 };
 export const useEventStore = create((set, get) => ({
   //state
-
   isLoading: true,
   error: false,
   events: [],
@@ -61,9 +60,9 @@ export const useEventStore = create((set, get) => ({
     totalEvents: 0,
     pageSize: 2,
   },
-  isCreateModalOpen:false,
-  isOpenEditModal:false,
-  isOpenDeleteModal:false,
+  isCreateModalOpen: false,
+  isOpenEditModal: false,
+  isOpenDeleteModal: false,
   //actions
   setIsLoading: (val) => set({ isLoading: val }),
   setError: (val) => set({ error: val }),
@@ -72,10 +71,9 @@ export const useEventStore = create((set, get) => ({
   setPagination: (pagination) => set({ pagination }),
   setIsCreateModalOpen: (isOpen) => set({ isCreateModalOpen: isOpen }),
   setIsOpenEditModal: (isOpen) => set({ isOpenEditModal: isOpen }),
-  setIsOpenDeleteModal:(isOpen)=>set({ isOpenDeleteModal: isOpen }),
+  setIsOpenDeleteModal: (isOpen) => set({ isOpenDeleteModal: isOpen }),
   // Force refresh from API, bypassing localStorage
   refreshEvents: async (currentPage, pageSize) => {
-
     try {
       const response = await fetch(
         `/api/eventList/?page=${currentPage}&pageSize=${pageSize}`,
@@ -105,14 +103,14 @@ export const useEventStore = create((set, get) => ({
             JSON.stringify(responseData.allEvents)
           );
         }
-
       }
     } catch (error) {
       console.log("error fetching data: ", error);
       set({ error: true });
     }
   },
-  forceRefreshEvents: async (currentPage, pageSize) => {
+  forceRefreshEvents: async () => {
+    const {currentPage,pageSize} = get();
     set({ isLoading: true });
     await get().refreshEvents(currentPage, pageSize);
     set({ isLoading: false });
@@ -173,6 +171,39 @@ export const useEventStore = create((set, get) => ({
     }
     return false;
   },
+  refreshCurrentPage: async (router) => {
+    const { forceRefreshEvents,currentPage,pageSize} = get();
+    console.log("refresh called");
+
+    // First, fetch the updated data
+    await forceRefreshEvents(currentPage, pageSize);
+
+    // After fetching, check if current page is now invalid
+    const { pagination: updatedPagination } = get();
+
+    // If we're on a page that no longer exists, redirect to the last valid page
+    if (
+      currentPage > updatedPagination.totalPages &&
+      updatedPagination.totalPages > 0
+    ) {
+      router.push({
+        pathname: "/",
+        query: {
+          page: updatedPagination.totalPages,
+          pageSize: pageSize,
+        },
+      });
+    } else if (updatedPagination.totalPages === 0) {
+      // If no pages exist at all, go to page 1
+      router.push({
+        pathname: "/",
+        query: {
+          page: 1,
+          pageSize: pageSize,
+        },
+      });
+    }
+  },
   getStatusBarItems: () => {
     const { counts } = get();
     return [
@@ -196,7 +227,7 @@ export const useEventStore = create((set, get) => ({
       },
     ];
   },
-   updateCookies: function (allCookies) {
-      document.cookie = allCookies;
-    },
+  updateCookies: function (allCookies) {
+    document.cookie = allCookies;
+  },
 }));

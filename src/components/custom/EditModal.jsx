@@ -33,7 +33,8 @@ import {
 import { Input } from "@/components/ui/input";
 import handleFrontendResponseObject from "@/utils/handleFrontendResponseObject";
 import { useEventStore } from "@/store/eventStore";
-export default function EditModal({ id, onSuccess, event }) {
+import { useRouter } from "next/router";
+export default function EditModal({ id, event }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,7 +45,8 @@ export default function EditModal({ id, onSuccess, event }) {
       end: new Date(event.end.dateTime || event.end.date),
     },
   });
-  const { isOpenEditModal, setIsOpenEditModal } = useEventStore();
+  const router = useRouter()
+  const { isOpenEditModal, setIsOpenEditModal,refreshCurrentPage } = useEventStore();
   const onSubmit = async (values) => {
     const response = await fetch(`/api/eventUpdation/${id}`, {
       method: "POST",
@@ -60,9 +62,9 @@ export default function EditModal({ id, onSuccess, event }) {
       }
     }
 
-    if (onSuccess) {
-      onSuccess();
-    }
+      setIsOpenEditModal(false)
+      refreshCurrentPage(router)
+    
   };
 
   return (
